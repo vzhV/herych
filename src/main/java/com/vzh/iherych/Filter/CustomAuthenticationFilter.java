@@ -62,6 +62,5 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         response.addCookie(refreshTokenCookie);
 
         log.info("Authentication successful for user: " + user.getUsername());
-
     }
 }

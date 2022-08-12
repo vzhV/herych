@@ -62,9 +62,20 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/user/password/{id}")
+    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody Password password) {
+        return userService.updatePassword(id, password.getOldPassword(), password.getNewPassword());
+    }
+
 }
 @Data
 class RoleToUser{
     private String username;
     private String roleName;
+}
+
+@Data
+class Password{
+    private String oldPassword;
+    private String newPassword;
 }

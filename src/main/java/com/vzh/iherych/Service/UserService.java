@@ -6,6 +6,7 @@ import com.vzh.iherych.Repository.UserRepository;
 import com.vzh.iherych.Repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -95,5 +96,24 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername(userName);
         UserRole userRole = userRoleRepository.findByName(roleName);
         user.getRoles().add(userRole);
+    }
+
+    public ResponseEntity<String> updatePassword(Long id, String oldPassword, String newPassword){
+        User user = findById(id);
+        if(user != null){
+            if(passwordEncoder.matches(oldPassword, user.getPassword())){
+                user.setPassword(passwordEncoder.encode(newPassword));
+                log.info("Password updated for user: " + user.getUsername());
+                return ResponseEntity.ok().build();
+            }
+            else{
+                log.error("Old password does not match");
+                return ResponseEntity.badRequest().body("Old password is incorrect");
+            }
+        }
+        else{
+            log.error("User not found");
+            return ResponseEntity.badRequest().body("User not found");
+        }
     }
 }
