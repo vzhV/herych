@@ -25,9 +25,16 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected boolean shouldNotFilter(HttpServletRequest request){
+        String uri = request.getRequestURI();
+        return uri.equals("/login") || uri.equals("/api/user/login")
+                || uri.equals("/api/user/sign-up") || uri.equals("/sign-up")
+                || request.getRequestURI().matches(".*(css|jpg|png|gif|js|html|svg|ico)");
+    }
 
-        if(request.getServletPath().equals("/api/user/login")) {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if(shouldNotFilter(request)) {
             filterChain.doFilter(request, response);
         }
         else{

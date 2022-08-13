@@ -6,6 +6,7 @@ import com.vzh.iherych.Service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,9 +31,28 @@ public class UserController {
         return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
     }
 
-    @PostMapping("/user")
+
+    @PostMapping("/user/sign-up")
     public ResponseEntity<User> save(@RequestBody User user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role").toUriString());
+
+        if(user.getUsername() == null
+            || user.getFirstName() == null
+            || user.getLastName() == null
+            ||user.getEmail() == null
+            || user.getPassword() == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        if(userService.findByEmail(user.getEmail()) != null){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        if(userService.findByUsername(user.getUsername()) != null){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        if(user.getPassword().length() < 8){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         User savedUser = userService.save(user);
         return savedUser == null ? ResponseEntity.badRequest().build() : ResponseEntity.created(uri).body(savedUser);
     }
@@ -67,7 +87,6 @@ public class UserController {
     public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody Password password) {
         return userService.updatePassword(id, password.getOldPassword(), password.getNewPassword());
     }
-
 
 }
 @Data

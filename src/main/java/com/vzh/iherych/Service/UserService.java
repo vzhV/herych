@@ -97,6 +97,7 @@ public class UserService implements UserDetailsService {
         UserRole userRole = userRoleRepository.findByName(roleName);
         user.getRoles().add(userRole);
     }
+
     public ResponseEntity<String> updatePassword(Long id, String oldPassword, String newPassword){
         User user = findById(id);
         if(user != null){
@@ -115,5 +116,4 @@ public class UserService implements UserDetailsService {
             return ResponseEntity.badRequest().body("User not found");
         }
     }
-
 }
