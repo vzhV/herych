@@ -31,6 +31,7 @@ public class UserController {
         return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
     }
 
+
     @PostMapping("/user/sign-up")
     public ResponseEntity<User> save(@RequestBody User user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role").toUriString());
@@ -80,6 +81,7 @@ public class UserController {
         userService.addRoleToUser(form.getUsername(), form.getRoleName());
         return ResponseEntity.ok().build();
     }
+
 
     @PutMapping("/user/password/{id}")
     public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody Password password) {
