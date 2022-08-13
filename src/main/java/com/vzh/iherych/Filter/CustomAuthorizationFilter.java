@@ -56,10 +56,12 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     if(e instanceof TokenExpiredException){
                         log.error("Access token expired");
                         response.sendError(FORBIDDEN.value(), "Access token expired");
+                        response.sendRedirect("/login");
                     }
                     else{
                         log.error("Access token invalid");
                         response.sendError(FORBIDDEN.value(), "Access token invalid");
+                        response.sendRedirect("/login");
                     }
                 }
             }
