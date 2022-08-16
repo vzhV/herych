@@ -16,7 +16,9 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String text;
+    private String Title;
+    @Lob
+    private String content;
     @OneToOne
     private User author;
     private Date date;

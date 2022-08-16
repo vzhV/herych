@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static java.util.Arrays.stream;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
@@ -55,12 +54,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 } catch (Exception e) {
                     if(e instanceof TokenExpiredException){
                         log.error("Access token expired");
-                        response.sendError(FORBIDDEN.value(), "Access token expired");
                         response.sendRedirect("/login");
                     }
                     else{
                         log.error("Access token invalid");
-                        response.sendError(FORBIDDEN.value(), "Access token invalid");
                         response.sendRedirect("/login");
                     }
                 }

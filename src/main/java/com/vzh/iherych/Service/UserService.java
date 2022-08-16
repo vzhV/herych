@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,8 +34,16 @@ public class UserService implements UserDetailsService {
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
-    public static boolean validate(String emailStr) {
+    public static final Pattern HEX_COLOR_REGEX =
+            Pattern.compile("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", Pattern.CASE_INSENSITIVE);
+
+    public static boolean validate_email(String emailStr) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+        return matcher.find();
+    }
+
+    public static boolean validate_hex_color(String hexColor) {
+        Matcher matcher = HEX_COLOR_REGEX.matcher(hexColor);
         return matcher.find();
     }
 
@@ -60,11 +70,18 @@ public class UserService implements UserDetailsService {
     }
 
     public User save(User user) {
-        if (!validate(user.getEmail()) || userRepository.findByEmail(user.getEmail()) != null) {
+        if (!validate_email(user.getEmail()) || userRepository.findByEmail(user.getEmail()) != null) {
             return null;
         }
         if (userRepository.findByUsername(user.getUsername()) != null) {
             return null;
+        }
+        UserRole role = userRoleRepository.findByName("USER");
+        if(user.getRoles() == null || user.getRoles().size() == 0){
+            user.setRoles(List.of(role));
+        }
+        if(!user.getRoles().contains(role)){
+            user.getRoles().add(role);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         log.info("Saving user: " + user.getUsername());
@@ -87,6 +104,28 @@ public class UserService implements UserDetailsService {
     }
 
     public UserRole saveUserRole(UserRole userRole) {
+        if(userRole.getName() == null && userRole.getName().length() == 0){
+            return null;
+        }
+        if(userRoleRepository.findByName(userRole.getName()) != null){
+            return null;
+        }
+        if(userRole.getBackground_color() == null){
+            userRole.setBackground_color("#E69AC0");
+        }
+        else{
+            if(!validate_hex_color(userRole.getBackground_color())){
+                return null;
+            }
+        }
+        if(userRole.getText_color() == null){
+            userRole.setText_color("#000000");
+        }
+        else{
+            if(!validate_hex_color(userRole.getText_color())){
+                return null;
+            }
+        }
         log.info("Saving role: " + userRole.getName());
         return userRoleRepository.save(userRole);
     }
@@ -95,7 +134,12 @@ public class UserService implements UserDetailsService {
         log.info("Adding role: " + roleName + " to user: " + userName);
         User user = userRepository.findByUsername(userName);
         UserRole userRole = userRoleRepository.findByName(roleName);
-        user.getRoles().add(userRole);
+        if(user.getRoles().contains(userRole)){
+            log.error("User: " + userName + " already has role: " + roleName);
+        }
+        else{
+            user.getRoles().add(userRole);
+        }
     }
 
     public ResponseEntity<String> updatePassword(Long id, String oldPassword, String newPassword){
@@ -115,5 +159,9 @@ public class UserService implements UserDetailsService {
             log.error("User not found");
             return ResponseEntity.badRequest().body("User not found");
         }
+    }
+
+    public User getLoggedInUser(){
+        return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 }

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
+import Swal from "sweetalert2";
+import {Comment} from "../../model/Comment";
+import {Label} from "../../model/Label";
+
 
 @Component({
   selector: 'app-main-page',
@@ -15,7 +19,59 @@ export class MainPageComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
+  userId: number = 0;
+  userName: string = '';
+  comments: Comment[] = [];
+
   ngOnInit(): void {
+    this.http.get<Comment[]>('http://localhost:8080/api/comment/0/3').subscribe(
+      data => {
+        this.comments = data;
+        this.comments.forEach(comment => {
+          comment.content = comment.content.replace(/\n/g, '<br>');
+        });
+        console.log(this.comments);
+      }
+    );
+  }
+
+  title: string = '';
+  content: string = '';
+
+  postComment(){
+    if(this.title.length == 0 || this.content.length == 0){
+      Swal.fire({
+        icon: 'error',
+        text: 'Title and content are required!',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    }
+    if(this.title.replace(/\s/g, '').length == 0 || this.content.replace(/\s/g, '').length == 0){
+      Swal.fire({
+        icon: 'error',
+        text: 'Title and content are required!',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    }
+    else{
+      const body = new HttpParams()
+        .set('title', this.title)
+        .set('content', this.content);
+      this.http.post('http://localhost:8080/api/comment', body).subscribe(
+        data => {
+          Swal.fire({
+            icon: 'success',
+            text: 'Comment posted!',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.title = '';
+          this.content = '';
+        }
+      )
+    }
   }
 
 }

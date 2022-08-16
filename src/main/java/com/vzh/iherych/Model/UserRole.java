@@ -16,4 +16,6 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String background_color;
+    private String text_color;
 }

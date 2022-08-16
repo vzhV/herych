@@ -17,14 +17,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final UserService userService;
 
     public Comment save(Comment comment) {
-        if(comment.getText() == null || comment.getText().isEmpty()) {
+        if(comment.getTitle() == null || comment.getTitle().isEmpty()) {
             return null;
         }
-        if(comment.getAuthor() == null) {
+        if(comment.getContent() == null || comment.getContent().isEmpty()) {
             return null;
         }
+        comment.setAuthor(userService.getLoggedInUser());
         comment.setDate(new Date(System.currentTimeMillis()));
         return commentRepository.save(comment);
     }

@@ -19,9 +19,9 @@ public class IherychApplication {
 	@Bean
 	CommandLineRunner run(UserService userService) {
 		return args -> {
-			userService.saveUserRole(new UserRole(null, "USER"));
-			userService.saveUserRole(new UserRole(null, "ADMIN"));
-			userService.saveUserRole(new UserRole(null, "SUPER_ADMIN"));
+			userService.saveUserRole(new UserRole(null, "USER", "#BAACB3", "#fff"));
+			userService.saveUserRole(new UserRole(null, "ADMIN", "#E6E056", "#781E0B"));
+
 
 			userService.save(new User(null, "vzh", "vzh@gmail.com", "fuckmyfps1", "Vlad", "Zh", new ArrayList<>()));
 			userService.save(new User(null, "vzh1", "vzh1@gmail.com", "fuckmyfps1", "Vlad1", "Zh1", new ArrayList<>()));
@@ -31,7 +31,6 @@ public class IherychApplication {
 			userService.addRoleToUser("vzh1", "USER");
 			userService.addRoleToUser("vzh2", "USER");
 			userService.addRoleToUser("vzh", "ADMIN");
-			userService.addRoleToUser("vzh", "SUPER_ADMIN");
 			userService.addRoleToUser("vzh1", "ADMIN");
 
 		};

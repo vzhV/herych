@@ -1,5 +1,7 @@
 package com.vzh.iherych.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.vzh.iherych.Model.User;
 import com.vzh.iherych.Model.UserRole;
 import com.vzh.iherych.Service.UserService;
@@ -8,9 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.security.Principal;
 
 @Slf4j
 @RestController
@@ -18,6 +24,8 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/user/email/{email}")
     public ResponseEntity<User> findByEmail(@PathVariable String email) {
@@ -84,6 +92,16 @@ public class UserController {
     @PutMapping("/user/password/{id}")
     public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody Password password) {
         return userService.updatePassword(id, password.getOldPassword(), password.getNewPassword());
+    }
+
+    @GetMapping("/personal_information")
+    @ResponseBody
+    public ObjectNode currentUserNameSimple(HttpServletRequest request) {
+        ObjectNode username = objectMapper.createObjectNode();
+        User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
+        username.put("id", tempUser.getId());
+        username.put("username", request.getUserPrincipal().getName());
+        return username;
     }
 
 }
