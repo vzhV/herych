@@ -1,0 +1,142 @@
+.sidenav {
+  position: fixed;
+  background-color: transparent;
+  overflow-x: hidden;
+  margin-left:0;
+  padding-top:2%;
+  z-index: 1;
+  width:10%;
+  height: 100%;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 20px;
+  text-decoration: none;
+  font-family: "Open Sans";
+  font-size: 14px;
+  color: #b2b2b2;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #E02232;
+}
+
+.button{
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  color: #b2b2b2;
+}
+
+.button-active{
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  color: #b2b2b2;
+  border-right: 5px solid #E02232;
+}
+
+.button:active{
+  color: #E02232;
+  border-right: 5px solid #E02232;
+}
+
+.button:focus{
+  color: #E02232;
+  border-right: 5px solid #E02232;
+}
+
+.button:visited{
+  color: #E02232;
+  border-right: 5px solid #E02232;
+}
+
+.menuItems {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menuItems li {
+  float:left;
+  margin: 6px 8px 6px 8px;
+  width: 90%;
+  height: 30px;
+  position: relative;
+}
+
+.menuItems label,
+.menuItems input {
+  display: block;
+  position: absolute;
+  text-decoration: none;
+  font-family: "Open Sans";
+  font-size: 14px;
+  color: #b2b2b2;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.menuItems input[type="radio"] {
+  opacity: 0.01;
+  z-index: 100;
+}
+
+.firstMenu input[type="radio"]:checked+label,
+.Checked+label {
+  background: transparent;
+  color: #E02232;
+  border-right: 5px solid #E02232;
+}
+
+.menuItems label {
+  cursor: pointer;
+  padding-left:20px;
+}
+
+.secondMenu label {
+  color:black;
+}
+
+.menuItems label:hover {
+  background: transparent;
+  color: #E02232;
+}
+
+.secondMenu input[type="radio"]:checked+label,
+.Checked+label {
+  background-color: #F7D2D5;
+  color: #E02232;
+}
+
+.btn{
+  color: #E02232;
+  background-color: blue;
+}
+
+
+img{width: 25px}
+
+img:hover{
+
+  filter: invert(8%) sepia(100%) saturate(7370%) hue-rotate(354deg) brightness(111%) contrast(106%)
+}
+h5{
+  text-decoration: none;
+  font-family: "Open Sans";
+  font-size: 14px;
+  color: #b2b2b2;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.row{}
+
+.main-body{
+  margin-left: 25%;
+  padding-top:2%;
+}

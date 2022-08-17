@@ -7,6 +7,9 @@ import {FormsModule} from "@angular/forms";
 import { HttpClientModule } from '@angular/common/http';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { MainPageComponent } from './main-page/main-page.component';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+import { ColorPickerModule } from '@iplab/ngx-color-picker';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -14,13 +17,16 @@ import { MainPageComponent } from './main-page/main-page.component';
     AppComponent,
     LoginComponent,
     SignUpComponent,
-    MainPageComponent
+    MainPageComponent,
+    AdminPanelComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ColorPickerModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

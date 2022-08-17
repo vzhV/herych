@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import Swal from "sweetalert2";
 import {Comment} from "../../model/Comment";
-import {Label} from "../../model/Label";
 
 
 @Component({

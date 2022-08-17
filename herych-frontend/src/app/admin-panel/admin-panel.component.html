@@ -1,0 +1,65 @@
+<div class="leftside-menu">
+  <div class="sidenav">
+    <ul class="menuItems firstMenu">
+      <li (click)="current_mode = 1">
+        <input type="radio" id="addRole" name="firstMenu"/>
+        <label for="addRole" class="button" (click)="current_mode = 1">Add Role</label>
+      </li>
+      <li (click)="current_mode = 2">
+        <input type="radio" id="AddFact" name="firstMenu"/>
+        <label for="AddFact" class="button" (click)="current_mode = 2">Edit Fact</label>
+      </li>
+      <li (click)="current_mode = 3">
+        <input type="radio" id="AssignRole" name="firstMenu"/>
+        <label for="AssignRole" class="button" >Assign Role</label>
+      </li>
+      <li (click)="backToProfile()">
+        <input type="radio" id="goBack" name="firstMenu"/>
+        <label for="goBack" class="button">Back to profile</label>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="main-body">
+  <div class="container">
+    <div class="row" *ngIf="current_mode == 0">
+      <div class="col d-flex justify-content-center">
+        <h2>Choose options from the menu</h2>
+      </div>
+    </div>
+    <div class="row" *ngIf="current_mode == 1">
+      <div class="col-md-6">
+        <div class="addRole">
+          <h2>Add Role</h2>
+          <form>
+            <div class="form-group">
+              <label for="roleName">Role Name</label>
+              <input type="text" class="form-control" id="roleName" name="roleName" placeholder="Enter role name" [(ngModel)]="roleName">
+            </div>
+            <div style="margin-top:2%">
+              <label>Choose background color</label>
+              <compact-picker [control]="backgroundControl" style="margin-top:1%"></compact-picker>
+            </div>
+            <div style="margin-top:2%">
+              <label>Choose text color</label>
+              <compact-picker [control]="textColorControl" style="margin-top:1%"></compact-picker>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h4>Result : </h4>
+        <div class="d-flex justify-content-center">
+          <span class="badge rounded-pill mb-2"
+          [style.background-color]="backgroundColor"
+          [style.color]="textColor">{{role}}</span>
+        </div>
+        <button class="btn btn-primary bg-danger text-white border rounded d-block w-100" type="submit"
+                style="margin-top:2%" (click)="saveRole()">Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
