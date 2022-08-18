@@ -3,6 +3,7 @@ import {ColorPickerControl} from "@iplab/ngx-color-picker";
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import Swal from "sweetalert2";
+import {Author} from "../../model/Author";
 
 @Component({
   selector: 'app-admin-panel',
@@ -13,6 +14,11 @@ export class AdminPanelComponent implements OnInit {
 
   public backgroundControl = new ColorPickerControl();
   public textColorControl = new ColorPickerControl();
+  users: Author[] = [];
+  selectedUsers: Author[] = [];
+  selectAll: boolean = false;
+  first = 0;
+  rows = 10;
 
   constructor(
     private http: HttpClient,
@@ -22,6 +28,10 @@ export class AdminPanelComponent implements OnInit {
 
   roleName: string = 'Role';
   current_mode: number = 0;
+  displayModal: boolean = false;
+
+  addRoleModalText: string = 'Role has been created!';
+
 
   ngOnInit(): void {
     this.backgroundControl.setValueFrom("#E69AC0")
@@ -32,7 +42,15 @@ export class AdminPanelComponent implements OnInit {
         '\nFor better experience, please use a desktop version.',
       showConfirmButton: true
     })
-
+    this.http.get<Author[]>('/api/user/all').subscribe(
+      data => {
+        this.users = data;
+        console.log(this.users);
+      }
+    );
+  }
+  httpOptions = {
+    headers: new HttpHeaders({'Content-Type': 'application/json', 'Accept': 'application/json'})
   }
 
   public get backgroundColor(): string {
@@ -58,17 +76,9 @@ export class AdminPanelComponent implements OnInit {
     }
     else{
       let body = JSON.stringify({name: this.role, background_color: this.backgroundColor, text_color: this.textColor});
-      const httpOptions = {
-        headers: new HttpHeaders({'Content-Type': 'application/json', 'Accept': 'application/json'})
-      }
-      this.http.post('http://localhost:8080/api/role', body, httpOptions).subscribe(
+      this.http.post('http://localhost:8080/api/role', body, this.httpOptions).subscribe(
         data => {
-          Swal.fire({
-            icon: 'success',
-            text: 'Role added successfully!',
-            showConfirmButton: false,
-            timer: 1500
-          })
+            this.displayModal = true;
         },
         error => {
           if(error.valueOf().status == 500){
@@ -96,4 +106,68 @@ export class AdminPanelComponent implements OnInit {
     this.router.navigate(['/'], {relativeTo: this.route});
   }
 
+  next(){
+    this.first += this.rows;
+  }
+
+  previous(){
+    this.first -= this.rows;
+  }
+
+  reset() {
+    this.first = 0;
+  }
+
+  isLastPage(): boolean{
+    return this.users ? this.first === (this.users.length - this.rows) : true;
+  }
+
+  isFirstPage(): boolean {
+    return this.users ? this.first === 0 : true;
+  }
+
+  onSelectionChange(value = []) {
+    this.selectAll = value.length === this.users.length;
+    this.selectedUsers = value;
+    console.log(this.selectedUsers);
+  }
+
+  onSelectAllChange(event: any) {
+    const checked = event.checked;
+
+    if (checked) {
+      this.selectedUsers = [...this.users];
+    }
+    else {
+      this.selectedUsers = [];
+      this.selectAll = false;
+    }
+    console.log(this.selectedUsers);
+  }
+
+  onHideModal(){
+    Swal.fire({
+      icon: 'success',
+      text: this.addRoleModalText,
+      showConfirmButton: false,
+      timer: 1500
+    });
+    this.selectedUsers = [];
+    this.roleName = 'Role';
+    this.addRoleModalText = 'Role has been created!';
+    this.selectAll = false;
+  }
+
+  async assignRole(){
+    await this.selectedUsers.forEach(user => {
+      let body = JSON.stringify({username: user.username, roleName: this.roleName});
+      this.http.post('/api/user/role', body, this.httpOptions).subscribe(
+        data => {
+
+        }
+      );
+    });
+    this.addRoleModalText = 'Role has been assigned to selected users!';
+    this.displayModal = false;
+  }
 }

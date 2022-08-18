@@ -10,6 +10,10 @@ import { MainPageComponent } from './main-page/main-page.component';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { ColorPickerModule } from '@iplab/ngx-color-picker';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {TableModule} from "primeng/table";
+import {ButtonModule} from "primeng/button";
+import {PrimeIcons} from "primeng/api";
+import {DialogModule} from "primeng/dialog";
 
 
 @NgModule({
@@ -20,14 +24,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MainPageComponent,
     AdminPanelComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule,
-    ColorPickerModule,
-    BrowserAnimationsModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        HttpClientModule,
+        ColorPickerModule,
+        BrowserAnimationsModule,
+        TableModule,
+        ButtonModule,
+        DialogModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

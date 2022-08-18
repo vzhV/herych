@@ -11,7 +11,7 @@
       </li>
       <li (click)="current_mode = 3">
         <input type="radio" id="AssignRole" name="firstMenu"/>
-        <label for="AssignRole" class="button" >Assign Role</label>
+        <label for="AssignRole" class="button">Assign Role</label>
       </li>
       <li (click)="backToProfile()">
         <input type="radio" id="goBack" name="firstMenu"/>
@@ -35,7 +35,8 @@
           <form>
             <div class="form-group">
               <label for="roleName">Role Name</label>
-              <input type="text" class="form-control" id="roleName" name="roleName" placeholder="Enter role name" [(ngModel)]="roleName">
+              <input type="text" class="form-control" id="roleName" name="roleName" placeholder="Enter role name"
+                     [(ngModel)]="roleName">
             </div>
             <div style="margin-top:2%">
               <label>Choose background color</label>
@@ -53,13 +54,63 @@
         <h4>Result : </h4>
         <div class="d-flex justify-content-center">
           <span class="badge rounded-pill mb-2"
-          [style.background-color]="backgroundColor"
-          [style.color]="textColor">{{role}}</span>
+                [style.background-color]="backgroundColor"
+                [style.color]="textColor">{{role}}</span>
         </div>
         <button class="btn btn-primary bg-danger text-white border rounded d-block w-100" type="submit"
                 style="margin-top:2%" (click)="saveRole()">Save
         </button>
       </div>
     </div>
+    <p-dialog header="Assign role to users (optional)" [(visible)]="displayModal" (onHide)="onHideModal()">
+      <div class="row">
+        <div class="card">
+          <h5>Users</h5>
+          <p-table [value]="users" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+                   responsiveLayout="scroll"
+                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                   [rowsPerPageOptions]="[10,25,50]"
+                   [(selection)]="selectedUsers" (selectionChange)="onSelectionChange($event)" [(selectAll)]="selectAll"
+                   (selectAllChange)="onSelectAllChange($event)"
+                   dataKey="id" [globalFilterFields]="['id','username','email','first_name','last_name']">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 3rem">
+                  <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pSortableColumn="id">Id
+                  <p-sortIcon field="id"></p-sortIcon>
+                </th>
+                <th pSortableColumn="username">Username
+                  <p-sortIcon field="username"></p-sortIcon>
+                </th>
+                <th pSortableColumn="email">Email
+                  <p-sortIcon field="email"></p-sortIcon>
+                </th>
+                <th pSortableColumn="first_name">First name
+                  <p-sortIcon field="first_name"></p-sortIcon>
+                </th>
+                <th pSortableColumn="last_name">Last name
+                  <p-sortIcon field="last_name"></p-sortIcon>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-author>
+              <tr>
+                <td>
+                  <p-tableCheckbox [value]="author"></p-tableCheckbox>
+                </td>
+                <td>{{author.id}}</td>
+                <td>{{author.username}}</td>
+                <td>{{author.email}}</td>
+                <td>{{author.firstName}}</td>
+                <td>{{author.lastName}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      <button pButton type="button" icon="pi pi-check" class="p-button-danger p-button-rounded p-button-outlined" style="align-self: end;margin-top:2%" (click)="assignRole()"></button>
+    </p-dialog>
   </div>
 </div>
