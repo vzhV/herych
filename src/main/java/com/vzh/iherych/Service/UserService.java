@@ -168,4 +168,20 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
+
+    public void deleteRoleFromUser(String userName, String roleName){
+        log.info("Removing role: " + roleName + " from user: " + userName);
+        User user = userRepository.findByUsername(userName);
+        UserRole userRole = userRoleRepository.findByName(roleName);
+        if(user.getRoles().contains(userRole)){
+            user.getRoles().remove(userRole);
+        }
+        else{
+            log.error("User: " + userName + " does not have role: " + roleName);
+        }
+    }
+
+    public List<UserRole> getAllUserRoles(){
+        return userRoleRepository.findAll();
+    }
 }

@@ -108,6 +108,17 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @PostMapping("/user/role/delete")
+    public ResponseEntity<?> deleteRoleFromUser(@RequestBody RoleToUser form) {
+        userService.deleteRoleFromUser(form.getUsername(), form.getRoleName());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/role")
+    public ResponseEntity<List<UserRole>> findAllRoles() {
+        return ResponseEntity.ok(userService.getAllUserRoles());
+    }
+
 }
 @Data
 class RoleToUser{

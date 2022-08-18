@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import Swal from "sweetalert2";
 import {Author} from "../../model/Author";
+import {Label} from "../../model/Label";
 
 @Component({
   selector: 'app-admin-panel',
@@ -19,6 +20,10 @@ export class AdminPanelComponent implements OnInit {
   selectAll: boolean = false;
   first = 0;
   rows = 10;
+  selectedUser : Author = {id: 0, username: '',email: '', firstName: '',lastName: '', roles: []};
+  displayEditModal: boolean = false;
+  selectedNewRole: Label = {id: 0, name: '', background_color: '', text_color: ''};
+  allLabels: Label[] = [];
 
   constructor(
     private http: HttpClient,
@@ -76,7 +81,7 @@ export class AdminPanelComponent implements OnInit {
     }
     else{
       let body = JSON.stringify({name: this.role, background_color: this.backgroundColor, text_color: this.textColor});
-      this.http.post('http://localhost:8080/api/role', body, this.httpOptions).subscribe(
+      this.http.post('/api/role', body, this.httpOptions).subscribe(
         data => {
             this.displayModal = true;
         },
@@ -122,7 +127,7 @@ export class AdminPanelComponent implements OnInit {
     return this.users ? this.first === (this.users.length - this.rows) : true;
   }
 
-  isFirstPage(): boolean {
+  isFirstPage(): boolean{
     return this.users ? this.first === 0 : true;
   }
 
@@ -169,5 +174,62 @@ export class AdminPanelComponent implements OnInit {
     });
     this.addRoleModalText = 'Role has been assigned to selected users!';
     this.displayModal = false;
+  }
+
+  async editRoleListModal(user: Author){
+    this.selectedUser = user;
+    await this.http.get<Label[]>('/api/role').subscribe(
+      data => {
+        this.allLabels = data;
+        this.selectedNewRole = this.allLabels[0];
+      }
+    );
+    this.displayEditModal = true;
+  }
+
+  assignRoleToUser(){
+    let body = JSON.stringify({username: this.selectedUser.username!, roleName: this.selectedNewRole.name});
+    this.http.post('/api/user/role', body, this.httpOptions).subscribe(
+      data => {
+        this.selectedUser.roles.push(this.selectedNewRole);
+        this.selectedUsers.forEach(user => {
+          if(user.username == this.selectedUser.username){
+            user.roles.push(this.selectedNewRole);
+          }
+        });
+      },
+      error => {
+        if(error.valueOf().status == 500){
+          Swal.fire({
+            icon: 'error',
+            text: 'Your session has expired! Please log in again!',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        }
+        else{
+          Swal.fire({
+            icon: 'error',
+            text: 'Role with this name already exists!',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        }
+      }
+    );
+  }
+
+  removeRoleFromUser(rolename: Label){
+    let body = JSON.stringify({username: this.selectedUser.username!, roleName: rolename.name});
+    this.http.post('/api/user/role/delete', body, this.httpOptions).subscribe(
+      data => {
+        this.selectedUser.roles.splice(this.selectedUser.roles.indexOf(rolename), 1);
+        this.selectedUsers.forEach(user => {
+          if(user.username == this.selectedUser.username){
+            user.roles.splice(user.roles.indexOf(rolename), 1);
+          }
+        });
+      }
+    );
   }
 }
