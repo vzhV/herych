@@ -63,14 +63,16 @@ public class UserController {
         return savedUser == null ? ResponseEntity.badRequest().build() : ResponseEntity.created(uri).body(savedUser);
     }
 
-    @PutMapping("/user/{id}")
-    public ResponseEntity<User> updateUserById(@PathVariable Long id,@RequestBody User user) {
+    @PutMapping("/user")
+    public ResponseEntity<User> updateUserById(HttpServletRequest request,@RequestBody User user) {
+        User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
+        Long id = tempUser.getId();
         User updated = userService.updateUserById(id, user);
         return updated == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> updateUserById(@PathVariable Long id) {
+    @GetMapping("/user/id/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User updated = userService.findById(id);
         return updated == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
     }
@@ -88,8 +90,10 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/user/password/{id}")
-    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody Password password) {
+    @PutMapping("/user/password")
+    public ResponseEntity<String> updatePassword(HttpServletRequest request, @RequestBody Password password) {
+        User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
+        Long id = tempUser.getId();
         return userService.updatePassword(id, password.getOldPassword(), password.getNewPassword());
     }
 

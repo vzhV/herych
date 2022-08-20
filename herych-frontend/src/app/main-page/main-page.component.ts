@@ -3,6 +3,7 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import Swal from "sweetalert2";
 import {Comment} from "../../model/Comment";
+import {Fact} from "../../model/Fact";
 
 
 @Component({
@@ -21,15 +22,24 @@ export class MainPageComponent implements OnInit {
   userId: number = 0;
   userName: string = '';
   comments: Comment[] = [];
+  fact: Fact = {id: 0, fact: 'fact'}
 
   ngOnInit(): void {
-    this.http.get<Comment[]>('http://localhost:8080/api/comment/0/3').subscribe(
+    this.refreshComments();
+    this.http.get<Fact>('/api/fact/random').subscribe(
+      data => {
+        this.fact = data == null ? {id: 0, fact: 'fact'} : data;
+      }
+    );
+  }
+
+  async refreshComments(){
+    await this.http.get<Comment[]>('/api/comment/0/3').subscribe(
       data => {
         this.comments = data;
         this.comments.forEach(comment => {
           comment.content = comment.content.replace(/\n/g, '<br>');
         });
-        console.log(this.comments);
       }
     );
   }
@@ -58,7 +68,7 @@ export class MainPageComponent implements OnInit {
       const body = new HttpParams()
         .set('title', this.title)
         .set('content', this.content);
-      this.http.post('http://localhost:8080/api/comment', body).subscribe(
+      this.http.post('/api/comment', body).subscribe(
         data => {
           Swal.fire({
             icon: 'success',
@@ -66,6 +76,7 @@ export class MainPageComponent implements OnInit {
             showConfirmButton: false,
             timer: 1500
           })
+          this.refreshComments();
           this.title = '';
           this.content = '';
         }
@@ -73,6 +84,13 @@ export class MainPageComponent implements OnInit {
     }
   }
 
+  logout(){
+    this.http.post('/logout', null).subscribe(
+      data => {
+        this.router.navigate(['/login'], {relativeTo: this.route});
+      }
+    );
+  }
 
 
 }

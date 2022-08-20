@@ -35,7 +35,7 @@
           <form>
             <div class="form-group">
               <label for="roleName">Role Name</label>
-              <input type="text" class="form-control" id="roleName" name="roleName" placeholder="Enter role name"
+              <input type="text" class="form-control shadow-none" id="roleName" name="roleName" placeholder="Enter role name"
                      [(ngModel)]="roleName">
             </div>
             <div style="margin-top:2%">
@@ -57,7 +57,7 @@
                 [style.background-color]="backgroundColor"
                 [style.color]="textColor">{{role}}</span>
         </div>
-        <button class="btn btn-primary bg-danger text-white border rounded d-block w-100" type="submit"
+        <button class="btn btn-primary bg-danger text-white border rounded d-block w-100 shadow-none" type="submit"
                 style="margin-top:2%" (click)="saveRole()">Save
         </button>
       </div>

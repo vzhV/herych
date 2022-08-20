@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.*;
 
 
 @Configuration
@@ -37,9 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         authenticationFilter.setFilterProcessesUrl("/api/user/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login","/api/login/**", "/api/token/refresh/**").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/user/email/**").hasAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(GET, "/api/user/username/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers("/login","/api/login/**").permitAll();
+        http.authorizeRequests().antMatchers(GET, "/api/user/email/**","/api/user/username/**","/api/user/id/**", "/api/user/all", "/api/role").hasAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(DELETE, "/api/fact/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(POST, "/api/role","/api/user/role", "/api/user/role/delete").hasAnyAuthority("ADMIN");
 
         http.formLogin()
                 .loginPage("/login")

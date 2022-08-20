@@ -29,7 +29,7 @@
           <li class="nav-item"><a class="nav-link" href="#">Music</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Help</a></li>
         </ul>
-        <button class="btn btn-primary bg-danger" type="button">Logout</button>
+        <a href="/logout"><button class="btn btn-primary bg-danger shadow-none" type="button">Logout</button></a>
       </div>
     </div>
   </nav>
@@ -38,8 +38,8 @@
   <div class="container">
     <div class="text-white bg-danger border rounded border-0 p-4 p-md-5" data-bss-hover-animate="rubberBand"
          style="box-shadow: 11px 14px 13px 0px rgb(194,191,191);">
-      <h2 class="fw-bold text-white mb-3">Цікавий факт №...</h2>
-      <p class="mb-4">Тут буде якась інфа , як в майнкрафті, но я поки єбу шо тут буде</p>
+      <h2 class="fw-bold text-white mb-3">Цікавий факт № {{fact.id}}</h2>
+      <p class="mb-4">{{fact.fact}}</p>
       <div class="my-3"></div>
     </div>
   </div>
@@ -107,13 +107,13 @@
             <div class="card-body p-sm-5">
               <h2 class="text-center mb-4">Напишіть свій</h2>
               <form method="post">
-                <div class="mb-3"><input class="form-control" type="text" id="name-2" name="name" placeholder="Title"
+                <div class="mb-3"><input class="form-control shadow-none" type="text" id="name-2" name="name" placeholder="Title"
                                          [(ngModel)]="title"></div>
                 <div class="mb-3"></div>
-                <div class="mb-3"><textarea class="form-control" id="message-2" name="message" rows="6"
+                <div class="mb-3"><textarea class="form-control shadow-none" id="message-2" name="message" rows="6"
                                             placeholder="Content" [(ngModel)]="content"></textarea></div>
                 <div>
-                  <button class="btn btn-primary bg-danger border rounded d-block w-100" type="submit"
+                  <button class="btn btn-primary bg-danger border rounded d-block w-100 shadow-none" type="submit"
                           (click)="postComment()">Send
                   </button>
                 </div>
