@@ -40,6 +40,7 @@ public class UserController {
         return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
     }
 
+
     @PostMapping("/user/sign-up")
     public ResponseEntity<User> save(@RequestBody User user) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role").toUriString());
@@ -64,6 +65,7 @@ public class UserController {
         User savedUser = userService.save(user);
         return savedUser == null ? ResponseEntity.badRequest().build() : ResponseEntity.created(uri).body(savedUser);
     }
+
 
     @PutMapping("/user")
     public ResponseEntity<User> updateUserById(@RequestBody User user) {
