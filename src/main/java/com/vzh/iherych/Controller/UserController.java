@@ -26,6 +26,8 @@ public class UserController {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final HttpServletRequest request;
+
     @GetMapping("/user/email/{email}")
     public ResponseEntity<User> findByEmail(@PathVariable String email) {
         User user = userService.findByEmail(email);
@@ -64,7 +66,7 @@ public class UserController {
     }
 
     @PutMapping("/user")
-    public ResponseEntity<User> updateUserById(HttpServletRequest request,@RequestBody User user) {
+    public ResponseEntity<User> updateUserById(@RequestBody User user) {
         User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
         Long id = tempUser.getId();
         User updated = userService.updateUserById(id, user);
@@ -91,7 +93,7 @@ public class UserController {
     }
 
     @PutMapping("/user/password")
-    public ResponseEntity<String> updatePassword(HttpServletRequest request, @RequestBody Password password) {
+    public ResponseEntity<String> updatePassword(@RequestBody Password password) {
         User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
         Long id = tempUser.getId();
         return userService.updatePassword(id, password.getOldPassword(), password.getNewPassword());
@@ -99,7 +101,7 @@ public class UserController {
 
     @GetMapping("/personal_information")
     @ResponseBody
-    public ObjectNode currentUserNameSimple(HttpServletRequest request) {
+    public ObjectNode currentUserNameSimple() {
         ObjectNode username = objectMapper.createObjectNode();
         User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
         username.put("id", tempUser.getId());
