@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/fact")
 @RequiredArgsConstructor
@@ -25,5 +27,10 @@ public class FactController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         factService.delete(id);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Fact>> findAll() {
+        return ResponseEntity.ok(factService.findAll());
     }
 }

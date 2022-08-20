@@ -62,8 +62,53 @@
         </button>
       </div>
     </div>
+    <div class="row" *ngIf="current_mode == 2">
+      <h2>Edit Facts</h2>
+      <h5>Add new fact</h5>
+      <div class="col-6">
+        <div class="form-group">
+          <input type="text" class="form-control shadow-none" id="factContent" name="factContent" placeholder="Enter fact content"
+                 [(ngModel)]="factContent">
+        </div>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-primary bg-danger text-white border rounded d-block w-100 shadow-none" type="submit"
+                style="" (click)="saveFact()">Save
+        </button>
+      </div>
+      <div class="col" style="margin-top:2%">
+        <h5>Facts</h5>
+        <p-table [value]="facts" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+                 responsiveLayout="scroll"
+                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                 [rowsPerPageOptions]="[10,25,50]"
+                 dataKey="id" [globalFilterFields]="['id','Fact']">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="id">Id
+                <p-sortIcon field="id"></p-sortIcon>
+              </th>
+              <th pSortableColumn="Fact">Fact
+                <p-sortIcon field="Fact"></p-sortIcon>
+              </th>
+              <th>Delete</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-fact>
+            <tr>
+              <td>{{fact.id}}</td>
+              <td>{{fact.fact}}</td>
+              <td>
+                <button pButton type="button" icon="pi pi-trash" class="p-button-danger p-button-outlined" (click)="deleteFact(fact.id)"></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
 
     <div class="row" *ngIf="current_mode == 3">
+      <h2>Assign Roles</h2>
       <h5>Users</h5>
       <p-table [value]="users" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
                responsiveLayout="scroll"

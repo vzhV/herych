@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -38,6 +39,10 @@ public class FactService {
             q = questionPage.getContent().get(0);
         }
         return q;
+    }
+
+    public List<Fact> findAll() {
+        return factRepository.findAll(PageRequest.of(0, (int) factRepository.count())).getContent();
     }
 
 }

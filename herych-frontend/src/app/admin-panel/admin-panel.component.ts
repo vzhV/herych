@@ -5,6 +5,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import Swal from "sweetalert2";
 import {Author} from "../../model/Author";
 import {Label} from "../../model/Label";
+import {Fact} from "../../model/Fact";
 
 @Component({
   selector: 'app-admin-panel',
@@ -16,6 +17,7 @@ export class AdminPanelComponent implements OnInit {
   public backgroundControl = new ColorPickerControl();
   public textColorControl = new ColorPickerControl();
   users: Author[] = [];
+  facts: Fact[] = [];
   selectedUsers: Author[] = [];
   selectAll: boolean = false;
   first = 0;
@@ -36,6 +38,7 @@ export class AdminPanelComponent implements OnInit {
   displayModal: boolean = false;
 
   addRoleModalText: string = 'Role has been created!';
+  factContent: string = 'Fact content';
 
 
   ngOnInit(): void {
@@ -47,12 +50,8 @@ export class AdminPanelComponent implements OnInit {
         '\nFor better experience, please use a desktop version.',
       showConfirmButton: true
     })
-    this.http.get<Author[]>('/api/user/all').subscribe(
-      data => {
-        this.users = data;
-        console.log(this.users);
-      }
-    );
+    this.refreshUsers();
+    this.refreshFacts();
   }
   httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json', 'Accept': 'application/json'})
@@ -106,6 +105,66 @@ export class AdminPanelComponent implements OnInit {
       );
     }
   }
+  saveFact(){
+    if(this.factContent.length == 0){
+      Swal.fire({
+        icon: 'error',
+        text: 'Fact content is required!',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    }
+    else{
+      let body = JSON.stringify({fact: this.factContent});
+      this.http.post('/api/fact', body, this.httpOptions).subscribe(
+        data => {
+          Swal.fire({
+            icon: 'success',
+            text: 'Fact has been added!',
+            showConfirmButton: false,
+            timer: 1500
+          })
+          this.factContent = '';
+          this.refreshFacts();
+        },
+        error => {
+          if(error.valueOf().status == 500){
+            Swal.fire({
+              icon: 'error',
+              text: 'Your session has expired! Please log in again!',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+          else{
+            Swal.fire({
+              icon: 'error',
+              text: 'This fact already exists!',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+        }
+      );
+    }
+  }
+
+  async refreshFacts(){
+    await this.http.get<Fact[]>('/api/fact/all').subscribe(
+      data => {
+        this.facts = data;
+      }
+    );
+  }
+
+  async refreshUsers(){
+    this.http.get<Author[]>('/api/user/all').subscribe(
+      data => {
+        this.users = data;
+      }
+    );
+  }
+
 
   backToProfile(){
     this.router.navigate(['/'], {relativeTo: this.route});
@@ -191,12 +250,7 @@ export class AdminPanelComponent implements OnInit {
     let body = JSON.stringify({username: this.selectedUser.username!, roleName: this.selectedNewRole.name});
     this.http.post('/api/user/role', body, this.httpOptions).subscribe(
       data => {
-        this.selectedUser.roles.push(this.selectedNewRole);
-        this.selectedUsers.forEach(user => {
-          if(user.username == this.selectedUser.username){
-            user.roles.push(this.selectedNewRole);
-          }
-        });
+        this.refreshUsers();
       },
       error => {
         if(error.valueOf().status == 500){
@@ -223,12 +277,39 @@ export class AdminPanelComponent implements OnInit {
     let body = JSON.stringify({username: this.selectedUser.username!, roleName: rolename.name});
     this.http.post('/api/user/role/delete', body, this.httpOptions).subscribe(
       data => {
-        this.selectedUser.roles.splice(this.selectedUser.roles.indexOf(rolename), 1);
-        this.selectedUsers.forEach(user => {
-          if(user.username == this.selectedUser.username){
-            user.roles.splice(user.roles.indexOf(rolename), 1);
-          }
+        this.refreshUsers();
+      }
+    );
+  }
+
+  deleteFact(id: number){
+    this.http.delete('/api/fact/' + id).subscribe(
+      data => {
+        Swal.fire({
+          icon: 'success',
+          text: 'Fact has been deleted!',
+          showConfirmButton: false,
+          timer: 1500
         });
+        this.refreshFacts();
+      },
+      error => {
+        if(error.valueOf().status == 500){
+          Swal.fire({
+            icon: 'error',
+            text: 'Your session has expired! Please log in again!',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        }
+        else{
+          Swal.fire({
+            icon: 'error',
+            text: 'Fact has not been deleted!',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        }
       }
     );
   }
