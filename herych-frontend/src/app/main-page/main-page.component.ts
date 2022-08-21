@@ -79,6 +79,16 @@ export class MainPageComponent implements OnInit {
           this.refreshComments();
           this.title = '';
           this.content = '';
+        },
+      error => {
+          if(error.url.valueOf().includes('login')){
+            Swal.fire({
+              icon: 'error',
+              text: 'Your session has expired! Please login again!',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
         }
       )
     }
@@ -92,5 +102,8 @@ export class MainPageComponent implements OnInit {
     );
   }
 
+  simpleButtonNavigate(link: string){
+    this.router.navigate([link], {relativeTo: this.route});
+  }
 
 }

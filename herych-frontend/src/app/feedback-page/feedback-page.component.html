@@ -23,8 +23,8 @@
         class="navbar-toggler-icon"></span></button>
       <div class="collapse navbar-collapse" id="navcol-1">
         <ul class="navbar-nav me-auto">
-          <li class="nav-item"><app-simple-button textButton="Home" [active]=true (click)="simpleButtonNavigate('/')"></app-simple-button></li>
-          <li class="nav-item"><app-simple-button textButton="Feedback" (click)="simpleButtonNavigate('/feedback')"></app-simple-button></li>
+          <li class="nav-item"><app-simple-button textButton="Home" (click)="simpleButtonNavigate('/')"></app-simple-button></li>
+          <li class="nav-item"><app-simple-button textButton="Feedback" [active]=true  (click)="simpleButtonNavigate('/feedback')"></app-simple-button></li>
           <li class="nav-item"><app-simple-button textButton="Photo" (click)="simpleButtonNavigate('/photo')"></app-simple-button></li>
           <li class="nav-item"><app-simple-button textButton="Music" (click)="simpleButtonNavigate('/music')"></app-simple-button></li>
           <li class="nav-item"><app-simple-button textButton="Help" (click)="simpleButtonNavigate('/help')"></app-simple-button></li>
@@ -33,16 +33,6 @@
       </div>
     </div>
   </nav>
-</section>
-<section class="py-4 py-xl-5">
-  <div class="container">
-    <div class="text-white bg-danger border rounded border-0 p-4 p-md-5" data-bss-hover-animate="rubberBand"
-         style="box-shadow: 11px 14px 13px 0px rgb(194,191,191);">
-      <h2 class="fw-bold text-white mb-3">Цікавий факт № {{fact.id}}</h2>
-      <p class="mb-4">{{fact.fact}}</p>
-      <div class="my-3"></div>
-    </div>
-  </div>
 </section>
 <div class="container py-4 py-xl-5">
   <div class="row mb-5">
@@ -71,9 +61,16 @@
       </div>
     </div>
   </div>
+  <div class="row d-flex justify-content-center">
+    <div class="col-12 d-flex justify-content-center">
+      <button pButton type="button" icon="pi pi-history" class="p-button-danger p-button-rounded p-button-outlined"
+              style="align-self: end;margin-top:2%" (click)="refreshComments()" *ngIf="moreComments"></button>
+    </div>
+  </div>
   <section class="position-relative py-4 py-xl-5">
     <div class="container position-relative">
       <div class="row d-flex justify-content-center">
+
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
           <div class="card mb-5">
             <div class="card-body p-sm-5">

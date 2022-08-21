@@ -5,4 +5,5 @@ export interface Comment{
   title: string;
   content: string;
   author: Author;
+  date: Date;
 }

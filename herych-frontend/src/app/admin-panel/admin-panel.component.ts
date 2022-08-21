@@ -85,7 +85,8 @@ export class AdminPanelComponent implements OnInit {
             this.displayModal = true;
         },
         error => {
-          if(error.valueOf().status == 500){
+          console.log(error)
+          if(error.url.valueOf().includes('login')){
             Swal.fire({
               icon: 'error',
               text: 'Your session has expired! Please log in again!',
@@ -128,7 +129,7 @@ export class AdminPanelComponent implements OnInit {
           this.refreshFacts();
         },
         error => {
-          if(error.valueOf().status == 500){
+          if(error.url.valueOf().includes('login')){
             Swal.fire({
               icon: 'error',
               text: 'Your session has expired! Please log in again!',
@@ -253,7 +254,7 @@ export class AdminPanelComponent implements OnInit {
         this.refreshUsers();
       },
       error => {
-        if(error.valueOf().status == 500){
+        if(error.url.valueOf().includes('login')){
           Swal.fire({
             icon: 'error',
             text: 'Your session has expired! Please log in again!',
@@ -294,7 +295,7 @@ export class AdminPanelComponent implements OnInit {
         this.refreshFacts();
       },
       error => {
-        if(error.valueOf().status == 500){
+        if(error.url.valueOf().includes('login')){
           Swal.fire({
             icon: 'error',
             text: 'Your session has expired! Please log in again!',

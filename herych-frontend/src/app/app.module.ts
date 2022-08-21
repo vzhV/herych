@@ -14,6 +14,8 @@ import {TableModule} from "primeng/table";
 import {ButtonModule} from "primeng/button";
 import {PrimeIcons} from "primeng/api";
 import {DialogModule} from "primeng/dialog";
+import { SimpleButtonComponent } from './simple-button/simple-button.component';
+import { FeedbackPageComponent } from './feedback-page/feedback-page.component';
 
 
 @NgModule({
@@ -22,7 +24,9 @@ import {DialogModule} from "primeng/dialog";
     LoginComponent,
     SignUpComponent,
     MainPageComponent,
-    AdminPanelComponent
+    AdminPanelComponent,
+    SimpleButtonComponent,
+    FeedbackPageComponent
   ],
     imports: [
         BrowserModule,

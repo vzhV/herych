@@ -4,12 +4,14 @@ import {LoginComponent} from "./login/login.component";
 import {SignUpComponent} from "./sign-up/sign-up.component";
 import {MainPageComponent} from "./main-page/main-page.component";
 import {AdminPanelComponent} from "./admin-panel/admin-panel.component";
+import {FeedbackPageComponent} from "./feedback-page/feedback-page.component";
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'sign-up', component: SignUpComponent},
   {path: '', component: MainPageComponent},
-  {path: 'admin', component: AdminPanelComponent}
+  {path: 'admin', component: AdminPanelComponent},
+  {path: 'feedback', component: FeedbackPageComponent}
 ];
 
 @NgModule({
