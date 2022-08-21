@@ -5,17 +5,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
-@Table(name = "ih_role")
+@Table(name = "ih_comment")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRole {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String background_color;
-    private String text_color;
+    private String Title;
+    @Lob
+    private String content;
+    @OneToOne
+    private User author;
+    private Date date;
 }
