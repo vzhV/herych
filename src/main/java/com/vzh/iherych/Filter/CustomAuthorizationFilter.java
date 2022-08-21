@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,10 +21,11 @@ import java.io.IOException;
 import java.util.*;
 
 import static java.util.Arrays.stream;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @Slf4j
+@RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+    private final Algorithm algorithm;
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request){
         String uri = request.getRequestURI();
@@ -42,7 +44,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             if(accessTokenCookie != null){
                 String accessToken = accessTokenCookie.getValue();
                 try {
-                    DecodedJWT jwt = JWT.require(Algorithm.HMAC256("secret")).build().verify(accessToken);
+                    DecodedJWT jwt = JWT.require(algorithm).build().verify(accessToken);
                     String username = jwt.getSubject();
                     String[] roles = jwt.getClaim("roles").asArray(String.class);
                     List<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -55,11 +57,11 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 } catch (Exception e) {
                     if(e instanceof TokenExpiredException){
                         log.error("Access token expired");
-                        response.sendError(FORBIDDEN.value(), "Access token expired");
+                        response.sendRedirect("/login");
                     }
                     else{
                         log.error("Access token invalid");
-                        response.sendError(FORBIDDEN.value(), "Access token invalid");
+                        response.sendRedirect("/login");
                     }
                 }
             }

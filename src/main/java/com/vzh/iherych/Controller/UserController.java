@@ -1,5 +1,7 @@
 package com.vzh.iherych.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.vzh.iherych.Model.User;
 import com.vzh.iherych.Model.UserRole;
 import com.vzh.iherych.Service.UserService;
@@ -10,7 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -18,6 +23,10 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final HttpServletRequest request;
 
     @GetMapping("/user/email/{email}")
     public ResponseEntity<User> findByEmail(@PathVariable String email) {
@@ -30,6 +39,7 @@ public class UserController {
         User user = userService.findByUsername(username);
         return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
     }
+
 
     @PostMapping("/user/sign-up")
     public ResponseEntity<User> save(@RequestBody User user) {
@@ -56,14 +66,17 @@ public class UserController {
         return savedUser == null ? ResponseEntity.badRequest().build() : ResponseEntity.created(uri).body(savedUser);
     }
 
-    @PutMapping("/user/{id}")
-    public ResponseEntity<User> updateUserById(@PathVariable Long id,@RequestBody User user) {
+
+    @PutMapping("/user")
+    public ResponseEntity<User> updateUserById(@RequestBody User user) {
+        User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
+        Long id = tempUser.getId();
         User updated = userService.updateUserById(id, user);
         return updated == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> updateUserById(@PathVariable Long id) {
+    @GetMapping("/user/id/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User updated = userService.findById(id);
         return updated == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(updated);
     }
@@ -81,9 +94,37 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/user/password/{id}")
-    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody Password password) {
+    @PutMapping("/user/password")
+    public ResponseEntity<String> updatePassword(@RequestBody Password password) {
+        User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
+        Long id = tempUser.getId();
         return userService.updatePassword(id, password.getOldPassword(), password.getNewPassword());
+    }
+
+    @GetMapping("/personal_information")
+    @ResponseBody
+    public ObjectNode currentUserNameSimple() {
+        ObjectNode username = objectMapper.createObjectNode();
+        User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
+        username.put("id", tempUser.getId());
+        username.put("username", request.getUserPrincipal().getName());
+        return username;
+    }
+
+    @GetMapping("/user/all")
+    public ResponseEntity<List<User>> findAll() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @PostMapping("/user/role/delete")
+    public ResponseEntity<?> deleteRoleFromUser(@RequestBody RoleToUser form) {
+        userService.deleteRoleFromUser(form.getUsername(), form.getRoleName());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/role")
+    public ResponseEntity<List<UserRole>> findAllRoles() {
+        return ResponseEntity.ok(userService.getAllUserRoles());
     }
 
 }

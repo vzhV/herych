@@ -45,6 +45,7 @@ export class LoginComponent implements OnInit {
         console.log('hello there ' + this.username);
         this.username = '';
         this.password = '';
+        this.router.navigate(['/'], {relativeTo: this.route});
       }, (error) => {
         Swal.fire({
           title: 'Error',

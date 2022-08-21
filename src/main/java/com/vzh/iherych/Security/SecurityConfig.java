@@ -1,5 +1,6 @@
 package com.vzh.iherych.Security;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.vzh.iherych.Filter.CustomAuthenticationFilter;
 import com.vzh.iherych.Filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.*;
 
 
 @Configuration
@@ -33,13 +34,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), algorithm());
         authenticationFilter.setFilterProcessesUrl("/api/user/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login","/api/login/**", "/api/token/refresh/**").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/user/email/**").hasAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(GET, "/api/user/username/**").hasAnyAuthority("ADMIN", "SUPER_ADMIN");
+        http.authorizeRequests().antMatchers("/login","/api/login/**").permitAll();
+        http.authorizeRequests().antMatchers(GET, "/api/user/email/**","/api/user/username/**","/api/user/id/**", "/api/user/all", "/api/role").hasAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(DELETE, "/api/fact/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(POST, "/api/role","/api/user/role", "/api/user/role/delete").hasAnyAuthority("ADMIN");
 
         http.formLogin()
                 .loginPage("/login")
@@ -53,12 +55,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("refresh_token");
 
         http.addFilter(authenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CustomAuthorizationFilter(algorithm()), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public Algorithm algorithm() {
+        return Algorithm.HMAC256("secret");
     }
 }
