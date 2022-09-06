@@ -3,6 +3,7 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Comment} from "../../model/Comment";
 import Swal from "sweetalert2";
+import {User} from "../../model/User";
 
 @Component({
   selector: 'app-feedback-page',
@@ -17,6 +18,11 @@ export class FeedbackPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshComments();
+    this.http.get<User>('/api/personal_information').subscribe(
+      data => {
+        this.isAdmin = data.admin;
+      }
+    )
   }
 
   comments: Comment[] = [];
@@ -24,6 +30,7 @@ export class FeedbackPageComponent implements OnInit {
   content: string = '';
   moreComments: boolean = true;
   page: number = 0;
+  isAdmin: boolean = false;
 
   async refreshComments(page: number = this.page){
     await this.http.get<Comment[]>('/api/comment/' + page + '/12').subscribe(
@@ -109,4 +116,12 @@ export class FeedbackPageComponent implements OnInit {
     }
   }
 
+  comingSoonMessage() {
+    Swal.fire({
+      icon: 'error',
+      text: 'Coming soon',
+      showConfirmButton: false,
+      timer: 1500
+    })
+  }
 }

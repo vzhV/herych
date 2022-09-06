@@ -1,0 +1,13 @@
+.simple-button{
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  font-family: 'Open Sans', sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.simple-button:hover{
+  text-decoration: none;
+  border-bottom: 1px solid #E02232;
+}

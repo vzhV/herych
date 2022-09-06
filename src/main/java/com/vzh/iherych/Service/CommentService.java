@@ -27,6 +27,9 @@ public class CommentService {
             return null;
         }
         comment.setAuthor(userService.getLoggedInUser());
+        if(userService.getLoggedInUser() == null){
+            return null;
+        }
         comment.setDate(new Date(System.currentTimeMillis()));
         return commentRepository.save(comment);
     }
