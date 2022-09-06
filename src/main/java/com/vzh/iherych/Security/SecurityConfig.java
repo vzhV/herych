@@ -27,6 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
+    private final String ADMIN_ROLE = "ADMIN";
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
@@ -39,9 +41,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/login","/api/login/**").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/user/email/**","/api/user/username/**","/api/user/id/**", "/api/user/all", "/api/role").hasAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(DELETE, "/api/fact/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(POST, "/api/role","/api/user/role", "/api/user/role/delete").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(GET, "/api/user/email/**","/api/user/username/**","/api/user/id/**", "/api/user/all", "/api/role").hasAuthority(ADMIN_ROLE);
+        http.authorizeRequests().antMatchers(DELETE, "/api/fact/**").hasAnyAuthority(ADMIN_ROLE);
+        http.authorizeRequests().antMatchers(POST, "/api/role","/api/user/role", "/api/user/role/delete").hasAnyAuthority(ADMIN_ROLE);
 
         http.formLogin()
                 .loginPage("/login")

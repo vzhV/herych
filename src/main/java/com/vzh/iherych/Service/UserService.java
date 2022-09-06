@@ -185,4 +185,8 @@ public class UserService implements UserDetailsService {
     public List<UserRole> getAllUserRoles(){
         return userRoleRepository.findAll();
     }
+
+    public boolean checkForAdmin(User user){
+        return user.getRoles().contains(userRoleRepository.findByName("ADMIN"));
+    }
 }

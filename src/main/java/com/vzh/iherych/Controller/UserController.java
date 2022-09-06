@@ -16,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @RestController
@@ -108,6 +109,7 @@ public class UserController {
         User tempUser = userService.findByUsername(request.getUserPrincipal().getName());
         username.put("id", tempUser.getId());
         username.put("username", request.getUserPrincipal().getName());
+        username.put("admin", userService.checkForAdmin(tempUser));
         return username;
     }
 

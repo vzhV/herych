@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import Swal from "sweetalert2";
 import {Comment} from "../../model/Comment";
 import {Fact} from "../../model/Fact";
+import {User} from "../../model/User";
 
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.css','./Login-Form-Basic-icons.css','./Articles-Badges-images.css']
+  styleUrls: ['./main-page.component.css', './Login-Form-Basic-icons.css', './Articles-Badges-images.css']
 })
 export class MainPageComponent implements OnInit {
 
@@ -17,10 +18,12 @@ export class MainPageComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {
+  }
 
   userId: number = 0;
   userName: string = '';
+  isAdmin: boolean = false;
   comments: Comment[] = [];
   fact: Fact = {id: 0, fact: 'fact'}
 
@@ -31,9 +34,14 @@ export class MainPageComponent implements OnInit {
         this.fact = data == null ? {id: 0, fact: 'fact'} : data;
       }
     );
+    this.http.get<User>('/api/personal_information').subscribe(
+      data => {
+        this.isAdmin = data.admin;
+      }
+    )
   }
 
-  async refreshComments(){
+  async refreshComments() {
     await this.http.get<Comment[]>('/api/comment/0/3').subscribe(
       data => {
         this.comments = data;
@@ -47,8 +55,8 @@ export class MainPageComponent implements OnInit {
   title: string = '';
   content: string = '';
 
-  postComment(){
-    if(this.title.length == 0 || this.content.length == 0){
+  postComment() {
+    if (this.title.length == 0 || this.content.length == 0) {
       Swal.fire({
         icon: 'error',
         text: 'Title and content are required!',
@@ -56,15 +64,14 @@ export class MainPageComponent implements OnInit {
         timer: 1500
       })
     }
-    if(this.title.replace(/\s/g, '').length == 0 || this.content.replace(/\s/g, '').length == 0){
+    if (this.title.replace(/\s/g, '').length == 0 || this.content.replace(/\s/g, '').length == 0) {
       Swal.fire({
         icon: 'error',
         text: 'Title and content are required!',
         showConfirmButton: false,
         timer: 1500
       })
-    }
-    else{
+    } else {
       const body = new HttpParams()
         .set('title', this.title)
         .set('content', this.content);
@@ -80,8 +87,8 @@ export class MainPageComponent implements OnInit {
           this.title = '';
           this.content = '';
         },
-      error => {
-          if(error.url.valueOf().includes('login')){
+        error => {
+          if (error.url.valueOf().includes('login')) {
             Swal.fire({
               icon: 'error',
               text: 'Your session has expired! Please login again!',
@@ -94,7 +101,7 @@ export class MainPageComponent implements OnInit {
     }
   }
 
-  logout(){
+  logout() {
     this.http.post('/logout', null).subscribe(
       data => {
         this.router.navigate(['/login'], {relativeTo: this.route});
@@ -102,8 +109,16 @@ export class MainPageComponent implements OnInit {
     );
   }
 
-  simpleButtonNavigate(link: string){
+  simpleButtonNavigate(link: string) {
     this.router.navigate([link], {relativeTo: this.route});
   }
 
+  comingSoonMessage() {
+    Swal.fire({
+      icon: 'error',
+      text: 'Coming soon',
+      showConfirmButton: false,
+      timer: 1500
+    })
+  }
 }

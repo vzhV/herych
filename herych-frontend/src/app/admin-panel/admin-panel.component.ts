@@ -224,15 +224,20 @@ export class AdminPanelComponent implements OnInit {
   }
 
   async assignRole(){
-    await this.selectedUsers.forEach(user => {
-      let body = JSON.stringify({username: user.username, roleName: this.roleName});
-      this.http.post('/api/user/role', body, this.httpOptions).subscribe(
-        data => {
+    if(this.selectedUsers.length == 0){
+      this.addRoleModalText = 'Role has been created!'
+    }
+    else{
+      await this.selectedUsers.forEach(user => {
+        let body = JSON.stringify({username: user.username, roleName: this.roleName});
+        this.http.post('/api/user/role', body, this.httpOptions).subscribe(
+          data => {
 
-        }
-      );
-    });
-    this.addRoleModalText = 'Role has been assigned to selected users!';
+          }
+        );
+      });
+      this.addRoleModalText = 'Role has been assigned to selected users!';
+    }
     this.displayModal = false;
   }
 
