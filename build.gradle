@@ -57,17 +57,3 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'Gradle Jar File Example',
-                'Implementation-Version': version,
-                'Main-Class': 'com.vzh.iherych.IherychApplication'
-    }
-    baseName = project.name + '-all'
-    from { configurations.implementation.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-}
-
-artifacts{
-    archives fatJar
-}
